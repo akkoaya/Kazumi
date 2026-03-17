@@ -47,8 +47,7 @@ class BangumiHTTP {
       "keyword": "",
       "sort": "rank",
       "filter": {
-        "type": [2],
-        "tag": ["日本"],
+        "type": [2,6],
         "air_date": [">=${dateRange[0]}", "<${dateRange[1]}"],
         "rank": [">0", "<=99999"],
         "nsfw": true
@@ -97,8 +96,7 @@ class BangumiHTTP {
         'keyword': '',
         'sort': 'rank',
         "filter": {
-          "type": [2],
-          "tag": ["日本"],
+          "type": [2,6],
           "rank": [">$rank", "<=1050"],
           "nsfw": false
         },
@@ -170,7 +168,7 @@ class BangumiHTTP {
       'keyword': keyword,
       'sort': sort,
       "filter": {
-        "type": [2],
+        "type": [2, 6],
         "tag": tags,
         "rank": (sort == 'rank') ? [">0", "<=99999"] : [">=0", "<=99999"],
         "nsfw": false
