@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:kazumi/request/core/dio_factory.dart';
+import 'package:kazumi/request/config/bangumi_mirror_policy.dart';
 import 'package:kazumi/request/core/network_error_mapper.dart';
 import 'package:kazumi/utils/constants.dart';
 import 'package:kazumi/services/storage/storage.dart';
@@ -100,18 +101,8 @@ class BangumiClient {
     }
     final enableBangumiProxy =
         GStorage.getSetting(SettingsKeys.enableBangumiProxy);
-    if (!enableBangumiProxy) {
-      return false;
-    }
-    final path = Uri.parse(url).path;
-    if (method == 'POST' && path == '/v0/search/subjects') {
-      return true;
-    }
-    if (method != 'GET') {
-      return false;
-    }
-    return path.startsWith('/p1/subjects/') && path.endsWith('/comments') ||
-        path.startsWith('/p1/episodes/') && path.endsWith('/comments') ||
-        path.startsWith('/p1/characters/') && path.endsWith('/comments');
+    return BangumiMirrorPolicy.isProtectedRequest(method, Uri.parse(url)) &&
+        enableBangumiProxy &&
+        BangumiMirrorPolicy.hasCredentials;
   }
 }

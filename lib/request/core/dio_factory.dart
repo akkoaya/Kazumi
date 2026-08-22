@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:kazumi/request/config/api_endpoints.dart';
+import 'package:kazumi/request/config/bangumi_mirror_policy.dart';
 import 'package:kazumi/request/core/dio_logger_interceptor.dart';
 import 'package:kazumi/request/core/network_config.dart';
 import 'package:kazumi/services/logging/logger.dart';
@@ -88,22 +89,17 @@ class DioFactory {
 }
 
 class _BangumiMirrorInterceptor extends Interceptor {
-  static const _mirrorableHosts = {
-    'api.bgm.tv',
-    'next.bgm.tv',
-  };
-
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     final enableBangumiProxy =
         GStorage.getSetting(SettingsKeys.enableBangumiProxy);
-    if (!enableBangumiProxy) {
-      handler.next(options);
-      return;
-    }
-
     final uri = options.uri;
-    if (!_mirrorableHosts.contains(uri.host)) {
+    final shouldMirror = BangumiMirrorPolicy.shouldMirror(
+      method: options.method,
+      uri: uri,
+      enabled: enableBangumiProxy,
+    );
+    if (!shouldMirror) {
       handler.next(options);
       return;
     }
